@@ -716,6 +716,238 @@ main {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+/* Poster board composition */
+.board-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin: -0.25rem 0 0.85rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.pitch {
+  grid-template-columns: minmax(150px, 0.52fr) minmax(740px, 3.1fr) minmax(150px, 0.52fr);
+  gap: 0.55rem;
+  min-height: 820px;
+  background:
+    radial-gradient(circle at 52% 52%, rgba(255,255,255,0.18), transparent 17%),
+    linear-gradient(118deg, rgba(255,255,255,0.16) 0 14%, transparent 14% 32%, rgba(255,255,255,0.11) 32% 46%, transparent 46%),
+    linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,0.08) 1px, transparent 1px),
+    linear-gradient(135deg, #78ba6a, #3e8f52 48%, #78bd69);
+  background-size: auto, auto, 74px 74px, 74px 74px, auto;
+}
+
+.pitch.is-groups-collapsed {
+  grid-template-columns: 72px minmax(760px, 1fr) 72px;
+}
+
+.pitch.is-groups-collapsed .team-row {
+  display: none;
+}
+
+.pitch.is-groups-collapsed .group-card {
+  padding: 0.18rem;
+}
+
+.pitch.is-groups-collapsed .group-card__title {
+  display: grid;
+  min-height: 3.1rem;
+  place-items: center;
+  text-align: center;
+}
+
+.groups {
+  gap: 0.36rem;
+}
+
+.group-card {
+  padding: 0.2rem;
+}
+
+.group-card__title {
+  padding: 0.16rem 0.25rem;
+  font-size: 0.56rem;
+}
+
+.team-row {
+  grid-template-columns: 0.82rem minmax(0, 1fr) auto;
+  gap: 0.16rem;
+  padding: 0.14rem 0.18rem;
+  font-size: 0.56rem;
+}
+
+.team-row__pts {
+  min-width: 1.15rem;
+  padding: 0.05rem 0.18rem;
+}
+
+.poster-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: 96px repeat(8, minmax(58px, 1fr)) 116px;
+  gap: 0.55rem;
+  min-height: 780px;
+  padding: 0.4rem 0.6rem 0.1rem;
+  overflow: hidden;
+}
+
+.poster-stage .bracket__title {
+  position: relative;
+  z-index: 4;
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+.poster-stage .bracket__title span {
+  font-size: clamp(2.6rem, 5vw, 5.6rem);
+  color: #332a31;
+}
+
+.poster-stage .bracket__title strong {
+  margin-top: 0.5rem;
+  padding: 0.28rem 0.52rem;
+  font-size: 0.82rem;
+}
+
+.knockout,
+.semi-zone {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.knockout--left {
+  grid-column: 1 / 5;
+  grid-row: 2 / 10;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: space-around;
+}
+
+.knockout--right {
+  grid-column: 9 / 13;
+  grid-row: 2 / 10;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: space-around;
+}
+
+.semi-zone {
+  grid-column: 5 / 9;
+  grid-row: 4 / 6;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-self: center;
+}
+
+.poster-lines {
+  position: absolute;
+  inset: 8.5rem 1.2rem 6.4rem;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.poster-lines svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.poster-lines path {
+  fill: none;
+  stroke: rgba(18, 43, 28, 0.76);
+  stroke-width: 0.55;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.35));
+}
+
+.pitch-art {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.player {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 4.7rem;
+  height: 6.4rem;
+  color: #fff;
+  font-weight: 900;
+  background: linear-gradient(155deg, #d9414b 0 52%, #f7fbf4 52% 100%);
+  border: 4px solid rgba(255,255,255,0.86);
+  border-radius: 48% 48% 38% 38%;
+  box-shadow: 0 12px 20px rgba(20, 50, 30, 0.22);
+  transform: rotate(-18deg);
+  opacity: 0.94;
+}
+
+.player::before,
+.player::after {
+  content: "";
+  position: absolute;
+  width: 2.4rem;
+  height: 0.62rem;
+  background: inherit;
+  border: 3px solid rgba(255,255,255,0.82);
+  border-radius: 999px;
+}
+
+.player::before {
+  top: 1.4rem;
+  left: -1.6rem;
+  transform: rotate(-34deg);
+}
+
+.player::after {
+  right: -1.6rem;
+  bottom: 1.3rem;
+  transform: rotate(-28deg);
+}
+
+.player--top-left { top: 6.6rem; left: 26%; }
+.player--top-right { top: 6.8rem; right: 26%; transform: rotate(24deg); background: linear-gradient(155deg, #2f75c9 0 52%, #f7fbf4 52% 100%); }
+.player--centre { top: 44%; left: 50%; width: 3.2rem; height: 3.2rem; transform: translate(-50%, -50%); background: #fff; color: #1c2320; border-radius: 999px; }
+.player--bottom-left { bottom: 0.2rem; left: 12%; width: 5.4rem; height: 7rem; transform: rotate(-11deg); }
+.player--bottom-right { right: 12%; bottom: 0.3rem; width: 5.4rem; height: 7rem; transform: rotate(12deg); background: linear-gradient(155deg, #f7fbf4 0 52%, #2f75c9 52% 100%); color: #c6333f; }
+
+.poster-stage .match-card {
+  min-height: 82px;
+  padding: 0.5rem;
+  border: 2px solid rgba(31, 64, 38, 0.34);
+  box-shadow: 0 8px 0 rgba(20, 50, 30, 0.15);
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+}
+
+.poster-stage .match-card--0 { border-top: 13px solid var(--yellow); }
+.poster-stage .match-card--1 { border-top: 13px solid var(--orange); }
+.poster-stage .match-card--2 { border-top: 13px solid var(--pink); }
+
+.poster-stage .match-card span {
+  font-size: 0.62rem;
+}
+
+.poster-stage .match-card strong {
+  font-size: 0.74rem;
+}
+
+.poster-stage .final-card {
+  position: relative;
+  z-index: 4;
+  grid-column: 4 / 10;
+  grid-row: 8 / 11;
+  align-self: end;
+  width: min(440px, 100%);
+  padding: 0.55rem;
+}
+
 @media (max-width: 1100px) {
   .pitch,
   .split {
@@ -747,6 +979,26 @@ main {
 
   .bracket__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .poster-stage {
+    grid-template-rows: 84px repeat(8, minmax(54px, 1fr)) 132px;
+  }
+
+  .poster-stage .bracket__title span {
+    font-size: 2rem;
+  }
+
+  .poster-stage .final-card {
+    grid-column: 1 / -1;
+  }
+
+  .board-leaderboard__row {
+    grid-template-columns: 1.4rem minmax(0, 1fr) 2rem;
+  }
+
+  .board-leaderboard__row > span:not(.board-leaderboard__rank) {
+    display: none;
   }
 }
 

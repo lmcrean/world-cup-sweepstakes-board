@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>WC2026 Sweepstake Board</title>
     <meta name="description" content="Interactive World Cup 2026 sweepstake board with live standings and student leaderboard.">
-    <link rel="stylesheet" href="styles.css?v=forks">
+    <link rel="stylesheet" href="styles.css?v=poster2">
   </head>
   <body>
     <div class="ticker" aria-label="Tournament details">
@@ -85,25 +85,50 @@
           <p class="eyebrow">Printable wall chart</p>
           <h2 id="board-title">Live sweepstake board</h2>
         </div>
+        <div class="board-controls" aria-label="Board layout controls">
+          <button class="button button--primary" id="posterFitButton" type="button" aria-pressed="false">Collapse side groups</button>
+          <span>Poster mode keeps the bracket shape visible; collapse the group stacks for more centre space.</span>
+        </div>
         <div class="pitch" id="pitch">
           <div class="groups groups--left" id="leftGroups"></div>
-          <div class="bracket" aria-label="Knockout bracket">
+          <div class="poster-stage" aria-label="Knockout bracket">
             <div class="bracket__title">
               <span>FIFA World Cup 2026</span>
-              <strong>Class Sweepstake</strong>
+              <strong>LIVE · CLASS SWEEPSTAKE · 2026</strong>
             </div>
-            <div class="bracket__grid" id="bracketGrid"></div>
-            <div class="bracket-forks" aria-hidden="true">
-              <svg viewBox="0 0 100 28" preserveAspectRatio="none" focusable="false">
-                <path d="M12 1 V10 H50 V27" />
-                <path d="M37 1 V10 H50" />
-                <path d="M63 1 V10 H50" />
-                <path d="M88 1 V10 H50" />
+
+            <div class="pitch-art" aria-hidden="true">
+              <span class="player player--top-left">10</span>
+              <span class="player player--top-right">7</span>
+              <span class="player player--centre">⚽</span>
+              <span class="player player--bottom-left">10</span>
+              <span class="player player--bottom-right">9</span>
+            </div>
+
+            <div class="knockout knockout--left" id="leftMatches"></div>
+            <div class="knockout knockout--right" id="rightMatches"></div>
+            <div class="semi-zone" id="semiMatches"></div>
+
+            <div class="poster-lines" aria-hidden="true">
+              <svg viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
+                <path d="M9 23 H28 V42 H43" />
+                <path d="M9 46 H28 V42" />
+                <path d="M9 69 H28 V58 H43" />
+                <path d="M9 86 H28 V58" />
+                <path d="M91 23 H72 V42 H57" />
+                <path d="M91 46 H72 V42" />
+                <path d="M91 69 H72 V58 H57" />
+                <path d="M91 86 H72 V58" />
+                <path d="M43 42 H50 V74" />
+                <path d="M57 42 H50" />
+                <path d="M43 58 H50" />
+                <path d="M57 58 H50" />
               </svg>
             </div>
+
             <div class="final-card">
-              <span>FINAL LEADERBOARD</span>
-              <strong>Live sweepstake standings</strong>
+              <span>FINAL</span>
+              <strong>Live sweepstake leaderboard</strong>
               <div class="board-leaderboard" id="boardLeaderboard"></div>
             </div>
           </div>
@@ -145,6 +170,6 @@
       <span>Data: worldcup26.ir open-source API</span>
     </footer>
 
-    <script src="app.js?v=forks" defer></script>
+    <script src="app.js?v=poster2" defer></script>
   </body>
 </html>

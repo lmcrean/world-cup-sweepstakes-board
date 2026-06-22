@@ -128,7 +128,10 @@ const els = {
   lastUpdated: document.querySelector("#lastUpdated"),
   leftGroups: document.querySelector("#leftGroups"),
   rightGroups: document.querySelector("#rightGroups"),
-  bracketGrid: document.querySelector("#bracketGrid"),
+  pitch: document.querySelector("#pitch"),
+  leftMatches: document.querySelector("#leftMatches"),
+  rightMatches: document.querySelector("#rightMatches"),
+  semiMatches: document.querySelector("#semiMatches"),
   boardLeaderboard: document.querySelector("#boardLeaderboard"),
   leaderboardList: document.querySelector("#leaderboardList"),
   groupTables: document.querySelector("#groupTables"),
@@ -137,7 +140,8 @@ const els = {
   highlightToggle: document.querySelector("#highlightToggle"),
   refreshButton: document.querySelector("#refreshButton"),
   replayButton: document.querySelector("#replayButton"),
-  printButton: document.querySelector("#printButton")
+  printButton: document.querySelector("#printButton"),
+  posterFitButton: document.querySelector("#posterFitButton")
 };
 
 function parseNumber(value) {
@@ -244,19 +248,37 @@ function renderGroups() {
 }
 
 function renderBracket() {
-  const labels = [
-    "Round of 32", "Round of 16", "Quarter-final", "Semi-final",
-    "Match 1", "Match 2", "Match 3", "Match 4",
-    "Match 5", "Match 6", "Match 7", "Match 8"
+  const left = [
+    ["Round of 32", "Match 1"],
+    ["Round of 32", "Match 2"],
+    ["Round of 16", "Match 3"],
+    ["Round of 16", "Match 4"],
+    ["Quarter-final", "Match 5"],
+    ["Quarter-final", "Match 6"]
   ];
-  els.bracketGrid.innerHTML = labels.map((label, index) => `
-    <article class="match-card">
-      <span>${index < 4 ? label : `Knockout ${index - 3}`}</span>
-      <strong>${index < 4 ? "Winner advances" : label}</strong>
+  const right = [
+    ["Round of 32", "Match 9"],
+    ["Round of 32", "Match 10"],
+    ["Round of 16", "Match 11"],
+    ["Round of 16", "Match 12"],
+    ["Quarter-final", "Match 13"],
+    ["Quarter-final", "Match 14"]
+  ];
+  const semis = [
+    ["Semi-final 1", "Left bracket winner"],
+    ["Semi-final 2", "Right bracket winner"]
+  ];
+  const card = ([stage, label], index) => `
+    <article class="match-card match-card--${index % 3}">
+      <span>${stage}</span>
+      <strong>${label}</strong>
       <div class="slot-line"></div>
       <div class="slot-line"></div>
     </article>
-  `).join("");
+  `;
+  els.leftMatches.innerHTML = left.map(card).join("");
+  els.rightMatches.innerHTML = right.map(card).join("");
+  els.semiMatches.innerHTML = semis.map(card).join("");
 }
 
 function renderLeaderboard() {
@@ -457,6 +479,12 @@ function wireEvents() {
       document.body.classList.add("replay");
       window.setTimeout(() => document.body.classList.remove("replay"), 900);
     });
+  });
+
+  els.posterFitButton.addEventListener("click", () => {
+    const isCollapsed = els.pitch.classList.toggle("is-groups-collapsed");
+    els.posterFitButton.textContent = isCollapsed ? "Expand side groups" : "Collapse side groups";
+    els.posterFitButton.setAttribute("aria-pressed", String(isCollapsed));
   });
 }
 
