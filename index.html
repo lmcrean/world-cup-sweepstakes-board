@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WC2026 Sweepstake Board</title>
+    <meta name="description" content="Interactive World Cup 2026 sweepstake board with live standings and student leaderboard.">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="ticker" aria-label="Tournament details">
+      <div class="ticker__track">
+        <span>WORLD CUP 2026</span><span>11 JUN - 19 JUL</span><span>USA · CANADA · MEXICO</span><span>48 TEAMS</span><span>104 MATCHES</span><span>LIVE SWEEPSTAKE LEADERBOARD</span><span>GROUP TABLES</span><span>PRINTABLE WALL CHART</span>
+        <span>WORLD CUP 2026</span><span>11 JUN - 19 JUL</span><span>USA · CANADA · MEXICO</span><span>48 TEAMS</span><span>104 MATCHES</span><span>LIVE SWEEPSTAKE LEADERBOARD</span><span>GROUP TABLES</span><span>PRINTABLE WALL CHART</span>
+      </div>
+    </div>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="WC2026 Sweepstake">
+        <span class="brand__ball">⚽</span>
+        <span>WC2026 Sweepstake</span>
+      </a>
+      <nav class="nav" aria-label="Page sections">
+        <a href="#board">Board</a>
+        <a href="#leaderboard">Leaderboard</a>
+        <a href="#groups">Groups</a>
+      </nav>
+      <div class="status-pill" id="apiStatus">Connecting...</div>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero__copy">
+          <p class="eyebrow">Draw ref: WC26-L4PBK · All teams shared</p>
+          <h1 id="page-title">World Cup 2026 sweepstake wall board</h1>
+          <p>Student assignments, live group points, and a classroom-style wall chart in one shareable page.</p>
+        </div>
+        <div class="hero__actions" aria-label="Board actions">
+          <button class="button button--primary" id="refreshButton" type="button">Refresh live data</button>
+          <button class="button" id="replayButton" type="button">Replay animation</button>
+          <button class="button" id="printButton" type="button">Print board</button>
+        </div>
+      </section>
+
+      <section class="summary-grid" aria-label="Sweepstake summary">
+        <article class="metric">
+          <span class="metric__value" id="leaderName">-</span>
+          <span class="metric__label">Current leader</span>
+        </article>
+        <article class="metric">
+          <span class="metric__value" id="topPoints">-</span>
+          <span class="metric__label">Top points</span>
+        </article>
+        <article class="metric">
+          <span class="metric__value" id="playedMatches">-</span>
+          <span class="metric__label">Team matches counted</span>
+        </article>
+        <article class="metric">
+          <span class="metric__value" id="lastUpdated">-</span>
+          <span class="metric__label">Live refresh</span>
+        </article>
+      </section>
+
+      <section class="toolbar" aria-label="Filters">
+        <label class="search">
+          <span>Search</span>
+          <input id="searchInput" type="search" placeholder="Student or team">
+        </label>
+        <label class="select">
+          <span>Sort</span>
+          <select id="sortSelect">
+            <option value="points">Leaderboard</option>
+            <option value="name">Student name</option>
+            <option value="teams">Team count</option>
+          </select>
+        </label>
+        <label class="toggle">
+          <input id="highlightToggle" type="checkbox" checked>
+          <span>Highlight leaders</span>
+        </label>
+      </section>
+
+      <section class="wall" id="board" aria-labelledby="board-title">
+        <div class="section-heading">
+          <p class="eyebrow">Printable wall chart</p>
+          <h2 id="board-title">Live sweepstake board</h2>
+        </div>
+        <div class="pitch" id="pitch">
+          <div class="groups groups--left" id="leftGroups"></div>
+          <div class="bracket" aria-label="Knockout bracket">
+            <div class="bracket__title">
+              <span>FIFA World Cup 2026</span>
+              <strong>Class Sweepstake</strong>
+            </div>
+            <div class="bracket__grid" id="bracketGrid"></div>
+            <div class="final-card">
+              <span>FINAL</span>
+              <strong>July 19 · New York/New Jersey</strong>
+              <div class="final-card__slot">Winner</div>
+            </div>
+          </div>
+          <div class="groups groups--right" id="rightGroups"></div>
+        </div>
+      </section>
+
+      <section class="split" id="leaderboard">
+        <div>
+          <div class="section-heading">
+            <p class="eyebrow">Live leaderboard</p>
+            <h2>Student standings</h2>
+          </div>
+          <div class="leaderboard" id="leaderboardList"></div>
+        </div>
+        <aside class="panel">
+          <h2>Scoring</h2>
+          <p>Student score is the sum of each assigned team's current group points. Goal difference and goals for are shown as tie-break context.</p>
+          <dl class="score-key">
+            <div><dt>Win</dt><dd>3 pts</dd></div>
+            <div><dt>Draw</dt><dd>1 pt</dd></div>
+            <div><dt>Live data</dt><dd>Updates every 5 minutes while the page is open</dd></div>
+          </dl>
+        </aside>
+      </section>
+
+      <section id="groups">
+        <div class="section-heading">
+          <p class="eyebrow">Groups A-L</p>
+          <h2>Live group tables</h2>
+        </div>
+        <div class="group-tables" id="groupTables"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>worldcup2026sweepstake.local</span>
+      <span>Not affiliated with FIFA</span>
+      <span>Data: worldcup26.ir open-source API</span>
+    </footer>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
