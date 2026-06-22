@@ -129,6 +129,7 @@ const els = {
   leftGroups: document.querySelector("#leftGroups"),
   rightGroups: document.querySelector("#rightGroups"),
   bracketGrid: document.querySelector("#bracketGrid"),
+  boardLeaderboard: document.querySelector("#boardLeaderboard"),
   leaderboardList: document.querySelector("#leaderboardList"),
   groupTables: document.querySelector("#groupTables"),
   searchInput: document.querySelector("#searchInput"),
@@ -286,6 +287,20 @@ function renderLeaderboard() {
   }).join("");
 }
 
+function renderBoardLeaderboard() {
+  const rows = assignmentRows()
+    .sort((a, b) => b.points - a.points || b.gd - a.gd || b.gf - a.gf || a.student.localeCompare(b.student))
+    .slice(0, 5);
+  els.boardLeaderboard.innerHTML = rows.map((row, index) => `
+    <div class="board-leaderboard__row ${index === 0 ? "is-top" : ""}">
+      <span class="board-leaderboard__rank">${index + 1}</span>
+      <strong>${row.student}</strong>
+      <span>${row.assignedTeams.map((team) => team.code).join(" / ")}</span>
+      <b>${row.points}</b>
+    </div>
+  `).join("");
+}
+
 function renderGroupTables() {
   els.groupTables.innerHTML = groupList().map((group) => `
     <article class="table-card">
@@ -342,6 +357,7 @@ function updateStatus() {
 function render() {
   renderGroups();
   renderBracket();
+  renderBoardLeaderboard();
   renderLeaderboard();
   renderGroupTables();
   renderMetrics();
