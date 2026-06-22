@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>WC2026 Sweepstake Board</title>
     <meta name="description" content="Interactive World Cup 2026 sweepstake board with live standings and student leaderboard.">
-    <link rel="stylesheet" href="styles.css?v=4dea565">
+    <link rel="stylesheet" href="styles.css?v=forks">
   </head>
   <body>
     <div class="ticker" aria-label="Tournament details">
@@ -93,6 +93,14 @@
               <strong>Class Sweepstake</strong>
             </div>
             <div class="bracket__grid" id="bracketGrid"></div>
+            <div class="bracket-forks" aria-hidden="true">
+              <svg viewBox="0 0 100 28" preserveAspectRatio="none" focusable="false">
+                <path d="M12 1 V10 H50 V27" />
+                <path d="M37 1 V10 H50" />
+                <path d="M63 1 V10 H50" />
+                <path d="M88 1 V10 H50" />
+              </svg>
+            </div>
             <div class="final-card">
               <span>FINAL LEADERBOARD</span>
               <strong>Live sweepstake standings</strong>
@@ -137,6 +145,6 @@
       <span>Data: worldcup26.ir open-source API</span>
     </footer>
 
-    <script src="app.js?v=4dea565" defer></script>
+    <script src="app.js?v=forks" defer></script>
   </body>
 </html>

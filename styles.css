@@ -406,6 +406,52 @@ main {
   align-content: center;
 }
 
+.bracket-forks {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(620px, 100%);
+  height: 74px;
+  justify-self: center;
+  margin: -0.45rem 0 -0.25rem;
+  pointer-events: none;
+}
+
+.bracket-forks svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.bracket-forks path {
+  fill: none;
+  stroke: rgba(24, 36, 29, 0.82);
+  stroke-width: 1.5;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.35));
+}
+
+.bracket-forks::before,
+.bracket-forks::after {
+  content: "";
+  position: absolute;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: #18241d;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.32);
+}
+
+.bracket-forks::before {
+  transform: translateY(-0.2rem);
+}
+
+.bracket-forks::after {
+  transform: translateY(1.92rem);
+}
+
 .match-card {
   position: relative;
   min-height: 92px;
