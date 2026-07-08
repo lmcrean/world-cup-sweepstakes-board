@@ -1,6 +1,7 @@
 const API_BASE = "https://worldcup26.ir";
 const REFRESH_MS = 5 * 60 * 1000;
 const CACHE_KEY = "wc2026-live-groups";
+const GAMES_CACHE_KEY = "wc2026-live-games";
 
 const teams = [
   { id: "1", name: "Mexico", display: "Mexico", flag: "🇲🇽", code: "MEX", group: "A" },
@@ -115,6 +116,7 @@ const state = {
   lastUpdated: null,
   error: null,
   usingCache: false,
+  games: [],
   query: "",
   sort: "points",
   highlight: true
@@ -147,6 +149,15 @@ const els = {
 function parseNumber(value) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function enrichStanding(row) {
@@ -248,37 +259,17 @@ function renderGroups() {
 }
 
 function renderBracket() {
-  const left = [
-    ["Round of 32", "Match 1"],
-    ["Round of 32", "Match 2"],
-    ["Round of 16", "Match 3"],
-    ["Round of 16", "Match 4"],
-    ["Quarter-final", "Match 5"],
-    ["Quarter-final", "Match 6"]
-  ];
-  const right = [
-    ["Round of 32", "Match 9"],
-    ["Round of 32", "Match 10"],
-    ["Round of 16", "Match 11"],
-    ["Round of 16", "Match 12"],
-    ["Quarter-final", "Match 13"],
-    ["Quarter-final", "Match 14"]
-  ];
-  const semis = [
-    ["Semi-final 1", "Left bracket winner"],
-    ["Semi-final 2", "Right bracket winner"]
-  ];
-  const card = ([stage, label], index) => `
-    <article class="match-card match-card--${index % 3}">
-      <span>${stage}</span>
-      <strong>${label}</strong>
-      <div class="slot-line"></div>
-      <div class="slot-line"></div>
-    </article>
-  `;
-  els.leftMatches.innerHTML = left.map(card).join("");
-  els.rightMatches.innerHTML = right.map(card).join("");
-  els.semiMatches.innerHTML = semis.map(card).join("");
+  const knockoutGames = state.games
+    .filter((game) => ["r32", "r16", "qf", "sf", "third", "final"].includes(game.type))
+    .sort((a, b) => parseNumber(a.id) - parseNumber(b.id));
+  const activeType = knockoutGames.find((game) => !isFinished(game))?.type || "final";
+  const focus = bracketFocus(activeType, knockoutGames);
+
+  els.leftMatches.innerHTML = focus.left.map(renderMatchCard).join("");
+  els.rightMatches.innerHTML = focus.right.map(renderMatchCard).join("");
+  els.semiMatches.innerHTML = focus.centre.map(renderMatchCard).join("");
+  els.pitch.dataset.stage = stageName(activeType);
+  renderFinalCard(focus.final, activeType);
 }
 
 function renderLeaderboard() {
@@ -321,6 +312,156 @@ function renderBoardLeaderboard() {
       <b>${row.points}</b>
     </div>
   `).join("");
+}
+
+function isFinished(game) {
+  return String(game.finished).toLowerCase() === "true" || String(game.time_elapsed).toLowerCase() === "finished";
+}
+
+function stageName(type) {
+  return {
+    r32: "Round of 32",
+    r16: "Round of 16",
+    qf: "Quarter-finals",
+    sf: "Semi-finals",
+    third: "Third place",
+    final: "Final"
+  }[type] || "Knockout";
+}
+
+function shortStageName(type) {
+  return {
+    r32: "R32",
+    r16: "R16",
+    qf: "QF",
+    sf: "SF",
+    third: "3rd",
+    final: "Final"
+  }[type] || "KO";
+}
+
+function gamesByType(games, type) {
+  return games.filter((game) => game.type === type);
+}
+
+function bracketFocus(activeType, games) {
+  const r16 = gamesByType(games, "r16");
+  const qf = gamesByType(games, "qf");
+  const sf = gamesByType(games, "sf");
+  const third = gamesByType(games, "third");
+  const final = gamesByType(games, "final");
+
+  if (activeType === "r32") {
+    const r32 = gamesByType(games, "r32");
+    return { left: r32.slice(0, 8), right: r32.slice(8), centre: r16.slice(0, 4), final: final[0] };
+  }
+  if (activeType === "r16") {
+    return { left: r16.slice(0, 4), right: r16.slice(4), centre: qf, final: final[0] };
+  }
+  if (activeType === "qf") {
+    return { left: qf.slice(0, 2), right: qf.slice(2), centre: sf, final: final[0] };
+  }
+  if (activeType === "sf") {
+    return { left: sf, right: third, centre: final, final: final[0] };
+  }
+  return { left: sf, right: third, centre: final, final: final[0] };
+}
+
+function displayTeam(game, side) {
+  const id = side === "home" ? game.home_team_id : game.away_team_id;
+  const apiName = game[`${side}_team_name_en`];
+  const label = game[`${side}_team_label`];
+  const team = teamById.get(String(id));
+  if (team && id !== "0") return { flag: team.flag, name: team.display, code: team.code };
+  const name = apiName || label || "TBD";
+  return { flag: "", name, code: compactLabel(name) };
+}
+
+function compactLabel(label) {
+  return String(label)
+    .replace(/^Winner Match\s+/i, "W")
+    .replace(/^Loser Match\s+/i, "L")
+    .replace(/^Winner Group\s+/i, "1")
+    .replace(/^Runner-up Group\s+/i, "2")
+    .replace(/^3rd Group\s+/i, "3");
+}
+
+function winnerSide(game) {
+  if (!isFinished(game)) return null;
+  const homeScore = parseNumber(game.home_score);
+  const awayScore = parseNumber(game.away_score);
+  if (homeScore > awayScore) return "home";
+  if (awayScore > homeScore) return "away";
+  const homePens = parseNumber(game.home_penalty_score);
+  const awayPens = parseNumber(game.away_penalty_score);
+  if (homePens > awayPens) return "home";
+  if (awayPens > homePens) return "away";
+  return null;
+}
+
+function scoreText(game) {
+  const score = `${parseNumber(game.home_score)}-${parseNumber(game.away_score)}`;
+  if (game.home_penalty_score && game.home_penalty_score !== "null") {
+    return `${score} (${parseNumber(game.home_penalty_score)}-${parseNumber(game.away_penalty_score)} pens)`;
+  }
+  return score;
+}
+
+function formatMatchDate(game) {
+  const [datePart, timePart = ""] = String(game.local_date || "").split(" ");
+  if (!datePart) return "Date TBC";
+  const [month, day] = datePart.split("/");
+  return `${month}/${day}${timePart ? ` ${timePart}` : ""}`;
+}
+
+function renderTeamSlot(game, side) {
+  const team = displayTeam(game, side);
+  const score = parseNumber(game[`${side}_score`]);
+  const isWinner = winnerSide(game) === side;
+  return `
+    <div class="match-card__team ${isWinner ? "is-winner" : ""}">
+      <span>${escapeHtml(team.flag)}</span>
+      <strong>${escapeHtml(team.code || team.name)}</strong>
+      <b>${isFinished(game) ? score : "-"}</b>
+    </div>
+  `;
+}
+
+function renderMatchCard(game, index) {
+  const status = isFinished(game) ? scoreText(game) : formatMatchDate(game);
+  return `
+    <article class="match-card match-card--${index % 3} ${isFinished(game) ? "is-complete" : "is-upcoming"}">
+      <span>${escapeHtml(shortStageName(game.type))} · Match ${escapeHtml(game.id)}</span>
+      <strong>${escapeHtml(status)}</strong>
+      ${renderTeamSlot(game, "home")}
+      ${renderTeamSlot(game, "away")}
+    </article>
+  `;
+}
+
+function renderFinalCard(finalGame, activeType) {
+  const rows = assignmentRows()
+    .sort((a, b) => b.points - a.points || b.gd - a.gd || b.gf - a.gf || a.student.localeCompare(b.student))
+    .slice(0, 3);
+  const finalHtml = finalGame ? `
+    <div class="final-card__match">
+      <span>${escapeHtml(formatMatchDate(finalGame))}</span>
+      <strong>${escapeHtml(displayTeam(finalGame, "home").name)} vs ${escapeHtml(displayTeam(finalGame, "away").name)}</strong>
+    </div>
+  ` : "";
+
+  els.boardLeaderboard.innerHTML = `
+    ${finalHtml}
+    <div class="board-leaderboard__stage">Active: ${escapeHtml(stageName(activeType))}</div>
+    ${rows.map((row, index) => `
+      <div class="board-leaderboard__row ${index === 0 ? "is-top" : ""}">
+        <span class="board-leaderboard__rank">${index + 1}</span>
+        <strong>${escapeHtml(row.student)}</strong>
+        <span>${escapeHtml(row.assignedTeams.map((team) => team.code).join(" / "))}</span>
+        <b>${row.points}</b>
+      </div>
+    `).join("")}
+  `;
 }
 
 function renderGroupTables() {
@@ -379,7 +520,6 @@ function updateStatus() {
 function render() {
   renderGroups();
   renderBracket();
-  renderBoardLeaderboard();
   renderLeaderboard();
   renderGroupTables();
   renderMetrics();
@@ -431,6 +571,12 @@ async function requestGroups() {
   return response.json();
 }
 
+async function requestGames() {
+  const response = await fetch(`${API_BASE}/get/games`, { cache: "no-store" });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json();
+}
+
 async function fetchLiveStandings() {
   state.error = null;
   state.usingCache = false;
@@ -444,15 +590,43 @@ async function fetchLiveStandings() {
       await new Promise((resolve) => window.setTimeout(resolve, 1200));
       payload = await requestGroups();
     }
+    const gamesPayload = await requestGames();
     applyGroupsPayload(payload, false);
+    state.games = Array.isArray(gamesPayload.games) ? gamesPayload.games : [];
     saveCachedStandings(payload);
+    saveCachedGames(gamesPayload);
   } catch (error) {
     state.error = error;
     loadCachedStandings();
+    loadCachedGames();
     console.error("Unable to fetch live standings", error);
   }
 
   render();
+}
+
+function loadCachedGames() {
+  try {
+    const cached = JSON.parse(window.localStorage.getItem(GAMES_CACHE_KEY) || "null");
+    if (cached?.games) {
+      state.games = cached.games;
+      return;
+    }
+  } catch (error) {
+    console.warn("Unable to load cached games", error);
+  }
+  state.games = [];
+}
+
+function saveCachedGames(payload) {
+  try {
+    window.localStorage.setItem(GAMES_CACHE_KEY, JSON.stringify({
+      games: payload.games,
+      cachedAt: new Date().toISOString()
+    }));
+  } catch (error) {
+    console.warn("Unable to save cached games", error);
+  }
 }
 
 function wireEvents() {
@@ -481,15 +655,13 @@ function wireEvents() {
     });
   });
 
-  els.posterFitButton.addEventListener("click", () => {
-    const isCollapsed = els.pitch.classList.toggle("is-groups-collapsed");
-    els.posterFitButton.textContent = isCollapsed ? "Expand side groups" : "Collapse side groups";
-    els.posterFitButton.setAttribute("aria-pressed", String(isCollapsed));
-  });
+  els.posterFitButton.hidden = true;
 }
 
 wireEvents();
 loadCachedStandings();
+loadCachedGames();
+els.pitch.classList.add("is-groups-collapsed");
 render();
 fetchLiveStandings();
 window.setInterval(fetchLiveStandings, REFRESH_MS);

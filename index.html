@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>WC2026 Sweepstake Board</title>
     <meta name="description" content="Interactive World Cup 2026 sweepstake board with live standings and student leaderboard.">
-    <link rel="stylesheet" href="styles.css?v=poster2">
+    <link rel="stylesheet" href="styles.css?v=knockout1">
   </head>
   <body>
     <div class="ticker" aria-label="Tournament details">
@@ -82,12 +82,12 @@
 
       <section class="wall" id="board" aria-labelledby="board-title">
         <div class="section-heading">
-          <p class="eyebrow">Printable wall chart</p>
-          <h2 id="board-title">Live sweepstake board</h2>
+          <p class="eyebrow">Knockout wall chart</p>
+          <h2 id="board-title">Live knockout board</h2>
         </div>
-        <div class="board-controls" aria-label="Board layout controls">
-          <button class="button button--primary" id="posterFitButton" type="button" aria-pressed="false">Collapse side groups</button>
-          <span>Poster mode keeps the bracket shape visible; collapse the group stacks for more centre space.</span>
+        <div class="board-controls" aria-label="Board status">
+          <button class="button button--primary" id="posterFitButton" type="button" hidden aria-pressed="true">Groups collapsed</button>
+          <span>Group stage is archived; the live board now keeps knockout fixtures in focus.</span>
         </div>
         <div class="pitch" id="pitch">
           <div class="groups groups--left" id="leftGroups"></div>
@@ -170,6 +170,6 @@
       <span>Data: worldcup26.ir open-source API</span>
     </footer>
 
-    <script src="app.js?v=poster2" defer></script>
+    <script src="app.js?v=knockout1" defer></script>
   </body>
 </html>

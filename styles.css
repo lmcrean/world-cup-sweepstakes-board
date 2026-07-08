@@ -23,6 +23,10 @@ html {
   scroll-behavior: smooth;
 }
 
+section[id] {
+  scroll-margin-top: 7.5rem;
+}
+
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
@@ -760,6 +764,10 @@ main {
   text-align: center;
 }
 
+.pitch.is-groups-collapsed .group-card__title span:last-child {
+  display: none;
+}
+
 .groups {
   gap: 0.36rem;
 }
@@ -938,6 +946,58 @@ main {
   font-size: 0.74rem;
 }
 
+.match-card__team {
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr) 1.4rem;
+  gap: 0.25rem;
+  align-items: center;
+  min-height: 1.35rem;
+  margin-top: 0.34rem;
+  padding: 0.22rem 0.3rem;
+  background: #fff;
+  border: 1px solid rgba(31, 64, 38, 0.18);
+}
+
+.match-card__team strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.match-card__team b {
+  display: grid;
+  min-height: 1.1rem;
+  place-items: center;
+  background: #18241d;
+  color: #fff;
+  font-size: 0.72rem;
+}
+
+.match-card__team.is-winner {
+  background: #fff2bf;
+  box-shadow: inset 3px 0 0 var(--red);
+}
+
+.match-card.is-upcoming {
+  background: #e8f7ff;
+}
+
+.board-leaderboard__stage,
+.final-card__match {
+  margin-top: 0.4rem;
+  padding: 0.3rem 0.4rem;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--ink);
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.final-card__match strong {
+  margin-top: 0.12rem;
+  font-size: 0.86rem;
+}
+
 .poster-stage .final-card {
   position: relative;
   z-index: 4;
@@ -954,8 +1014,16 @@ main {
     grid-template-columns: 1fr;
   }
 
+  .pitch.is-groups-collapsed {
+    grid-template-columns: 1fr;
+  }
+
   .groups {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .pitch.is-groups-collapsed .groups {
+    display: none;
   }
 }
 
@@ -982,15 +1050,55 @@ main {
   }
 
   .poster-stage {
-    grid-template-rows: 84px repeat(8, minmax(54px, 1fr)) 132px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    gap: 0.7rem;
+    min-height: auto;
+    padding: 0.75rem;
   }
 
   .poster-stage .bracket__title span {
-    font-size: 2rem;
+    font-size: 1.55rem;
+    line-height: 1;
+    white-space: normal;
+  }
+
+  .pitch-art,
+  .poster-lines {
+    display: none;
+  }
+
+  .knockout--left,
+  .knockout--right,
+  .semi-zone {
+    grid-column: 1;
+    grid-row: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+  }
+
+  .poster-stage .match-card {
+    min-height: 0;
+    padding: 0.42rem;
+  }
+
+  .poster-stage .match-card span {
+    font-size: 0.58rem;
+  }
+
+  .poster-stage .match-card strong {
+    font-size: 0.68rem;
+  }
+
+  .match-card__team {
+    grid-template-columns: 1rem minmax(0, 1fr) 1.25rem;
+    padding: 0.18rem 0.24rem;
   }
 
   .poster-stage .final-card {
     grid-column: 1 / -1;
+    grid-row: auto;
   }
 
   .board-leaderboard__row {
