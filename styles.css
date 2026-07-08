@@ -948,7 +948,7 @@ main {
 
 .match-card__team {
   display: grid;
-  grid-template-columns: 1rem minmax(0, 1fr) 1.4rem;
+  grid-template-columns: 1rem minmax(2rem, 0.75fr) minmax(2.4rem, 1fr) 1.4rem;
   gap: 0.25rem;
   align-items: center;
   min-height: 1.35rem;
@@ -961,6 +961,18 @@ main {
 .match-card__team strong {
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.match-card__team em {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 900;
+  text-align: right;
+  text-overflow: ellipsis;
+  text-transform: capitalize;
   white-space: nowrap;
 }
 
@@ -1092,8 +1104,12 @@ main {
   }
 
   .match-card__team {
-    grid-template-columns: 1rem minmax(0, 1fr) 1.25rem;
+    grid-template-columns: 1rem minmax(2rem, 0.75fr) minmax(2.2rem, 1fr) 1.25rem;
     padding: 0.18rem 0.24rem;
+  }
+
+  .match-card__team em {
+    font-size: 0.58rem;
   }
 
   .poster-stage .final-card {

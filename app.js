@@ -109,6 +109,14 @@ const teamByName = new Map(teams.flatMap((team) => [
   [team.display.toLowerCase(), team]
 ]));
 const teamById = new Map(teams.map((team) => [team.id, team]));
+const studentByTeamId = new Map();
+
+assignments.forEach((entry) => {
+  entry.teams.forEach((name) => {
+    const team = teamByName.get(name.toLowerCase());
+    if (team) studentByTeamId.set(team.id, entry.student);
+  });
+});
 
 const state = {
   standings: new Map(),
@@ -372,9 +380,9 @@ function displayTeam(game, side) {
   const apiName = game[`${side}_team_name_en`];
   const label = game[`${side}_team_label`];
   const team = teamById.get(String(id));
-  if (team && id !== "0") return { flag: team.flag, name: team.display, code: team.code };
+  if (team && id !== "0") return { id: team.id, flag: team.flag, name: team.display, code: team.code };
   const name = apiName || label || "TBD";
-  return { flag: "", name, code: compactLabel(name) };
+  return { id: "", flag: "", name, code: compactLabel(name) };
 }
 
 function compactLabel(label) {
@@ -418,10 +426,12 @@ function renderTeamSlot(game, side) {
   const team = displayTeam(game, side);
   const score = parseNumber(game[`${side}_score`]);
   const isWinner = winnerSide(game) === side;
+  const student = team.id ? studentByTeamId.get(team.id) : "";
   return `
     <div class="match-card__team ${isWinner ? "is-winner" : ""}">
       <span>${escapeHtml(team.flag)}</span>
       <strong>${escapeHtml(team.code || team.name)}</strong>
+      <em>${escapeHtml(student || "")}</em>
       <b>${isFinished(game) ? score : "-"}</b>
     </div>
   `;
